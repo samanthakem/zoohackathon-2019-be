@@ -21,8 +21,8 @@ If the installation was successful, you should be able to run the following comm
 
     $ git clone git@github.com:<YOUR-USER>/zoohackathon-2019-be.git
     $ cd zoohackathon-2019-be
-    $ `npm i`
+    $ npm i
 
 ## Running the project
 
-    $ `npm run start`
+    $ npm run start
