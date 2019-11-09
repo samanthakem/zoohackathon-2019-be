@@ -1,21 +1,26 @@
 var express = require('express'),
   app = express(),
-  port = process.env.PORT || 3000,
+  config = require('./config.js');
   mongoose = require('mongoose'),
   User = require('./src/models/User'),
   bodyParser = require('body-parser');
 
-// mongoose instance connection url connection
+
+let uri = `mongodb+srv://${config.db.username}:${config.db.password}@cluster0-evtwo.mongodb.net/test?retryWrites=true&w=majority`;
+
+console.log(uri);
+
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/zoodb');
+mongoose.connect(uri, {
+  useNewUrlParser: true
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
 var routes = require('./src/routes/users'); //importing route
 routes(app); //register the route
 
-app.listen(port);
+app.listen(config.port);
 
-console.log('todo list RESTful API server started on: ' + port);
+console.log('RESTful API server started on: ' + config.port);
