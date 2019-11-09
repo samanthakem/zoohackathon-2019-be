@@ -22,7 +22,7 @@ exports.create = function(req, res) {
   };
 // Delete Event API
 exports.delete = function(req, res ){
-    event.findByIdAndRemove(req.params.id, function(err) {
+    event.findByIdAndRemove({_id: req.params.id}, function(err) {
         if(err)
             res.send(err);
         else
@@ -31,11 +31,20 @@ exports.delete = function(req, res ){
 }
 // Update Event API
 exports.update = function(req, res ){
-    event.findByIdAndUpdate(req.params.id, req.body, function(err) {
+    event.findByIdAndUpdate({_id: req.params.id}, req.body, function(err) {
         if(err)
             res.send(err);
         else
             res.send({message: 'Event Updated!'})
+    });
+}
+// Send Alert Api
+
+exports.alert = function(req, res){
+    event.findById({_id: req.params.id}, function(err, user) {
+        if (err)
+            res.send(err);
+        res.json(user);
     });
 }
 

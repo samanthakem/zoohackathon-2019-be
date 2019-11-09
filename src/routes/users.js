@@ -7,4 +7,5 @@ module.exports = function (app) {
         .post(users.create)
         .delete(users.delete)
         .post(users.update)
+        .post(users.alert)
 };
