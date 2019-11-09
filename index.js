@@ -5,10 +5,7 @@ var express = require('express'),
   User = require('./src/models/User'),
   bodyParser = require('body-parser');
 
-
 let uri = `mongodb+srv://${config.db.username}:${config.db.password}@cluster0-evtwo.mongodb.net/test?retryWrites=true&w=majority`;
-
-console.log(uri);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(uri, {

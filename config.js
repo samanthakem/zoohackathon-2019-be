@@ -5,6 +5,7 @@ const dev = {
    port: 3000
  },
  db: {
+  name: 'hackathon',
   username: 'sdzg',
   password: 'Intuit123'
  }
