@@ -1,21 +1,17 @@
 var express = require('express'),
   app = express(),
-  port = process.env.PORT || 3000,
-  mongoose = require('mongoose'),
-  User = require('./src/models/User'),
+  config = require('./config.js'),
   bodyParser = require('body-parser');
 
-// mongoose instance connection url connection
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/zoodb');
+const initDatabase = require("./db").initDatabase;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+var routes = require('./src/routes/events');
+routes(app);
 
-var routes = require('./src/routes/users'); //importing route
-routes(app); //register the route
-
-app.listen(port);
-
-console.log('todo list RESTful API server started on: ' + port);
+initDatabase(function (err) {
+    app.listen(config.app.port);
+    console.log('RESTful API server started on: ' + config.app.port);
+});
