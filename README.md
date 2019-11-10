@@ -50,7 +50,7 @@ It returns the current user id.
  - long: Integer
 It returns the newly created event.
 
-`GET /events`
+`GET /events` -> using this one you can get all the events happening in a specific context, useful to see the conflict NOGs.
  - start: String (yyyy-mm-dd)
  - end: String (yyyy-mm-dd)
  - radius: Double
@@ -59,4 +59,13 @@ It returns the newly created event.
  - keyword: String
 It returns all the events with the parameters above.
 
-`DELETE
+`DELETE /event/:id`
+It shows that the event has been deleted
+
+`PUT /event/:id`
+ - start: String (yyyy-mm-dd)
+ - end: String (yyyy-mm-dd)
+ - radius: Double
+ - lat: Integer
+ - long: Integer
+It returns the updated event.
