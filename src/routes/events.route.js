@@ -14,7 +14,6 @@ module.exports = function(app) {
   app.route('/event')
       .post(validateRequest, events.create)
       .delete(validateRequest, events.delete)
-      .get(validateRequest, events.find)
 
   app.route('/event/:id')
     .put(validateRequest, events.update)
