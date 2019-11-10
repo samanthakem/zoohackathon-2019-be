@@ -1,9 +1,16 @@
 'use strict';
 
 const database = require("../../db").getDatabase;
-// getting all events
+// getting all events and filtering
 exports.get_all = function(req, res) {
-  database().collection("events").find({}).toArray((error, result) => {
+  console.log(req)
+  database().collection("events").find({
+    "loc" : {
+      $geoWithin : {
+        $centerSphere : [[req.body.lat,req.body.long], 100/3963.2 ]
+      }
+    }
+  }).toArray((error, result) => {
     if(error) {
         return res.status(500).send(error);
     }
@@ -29,18 +36,25 @@ exports.find = function(req, res) {
 });
 };
 // update one event
-exports.update = function(req, res) {
-  var hero = {
-    Users: req.params.Users,
+exports.update = function (req, res) {
+
+  console.log(req)
+  const doc = {
+    Users: "Sudeepta"
   }
-  database().collection("events").update({_id: req.params.id}, hero, function(err, hero) {
-    if(err) {
-      res.json({
-        error : err
-      })
+  database().collection("events").update({_id: req.body._id}, doc, {upsert:true, new:true} , function (err, product) {
+    if (err) return res.status(500).send(err);
+    res.send('Product updated.');
+  });
+};
+
+// getting all events and filtering
+exports.get_original = function(req, res) {
+  database().collection("events").find({
+  }).toArray((error, result) => {
+    if(error) {
+      return res.status(500).send(error);
     }
-    res.json({
-      message : "Hero updated successfully"
-    })
-  })
-}
+    res.send(result);
+});
+};
