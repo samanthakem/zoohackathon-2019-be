@@ -2,7 +2,7 @@ const env = process.env.NODE_ENV || 'dev';
 
 const dev = {
  app: {
-   port: 3000
+   port: 3001
  },
  db: {
   name: process.env.DB_NAME,
