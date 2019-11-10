@@ -56,7 +56,7 @@ exports.getAll = (req, res) => {
   let keyword = req.body.keyword;
 
   database().collection("events").find({
-    $and: [
+    $or: [
       { $or : [
          { "topics": keyword },
          { "topics": { $exists: false} }
@@ -94,8 +94,10 @@ exports.create = (req, res) => {
     start: req.body.start,
     end: req.body.end,
     radius: req.body.radius,
-    lat: req.body.lat,
-    long: req.body.long,
+    loc: {
+      type: "Point",
+      coordinates: [req.body.long, req.body.lat]
+    },
     createdBy: req.user._id
   }
 
