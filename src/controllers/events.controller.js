@@ -48,99 +48,106 @@ const database = require("../middleware/db").getDatabase;
 const calculateDistance = require("../util/helper").calculateDistance;
 
 exports.getAll = (req, res) => {
-  let start = new Date(req.body.start);
-  let end = new Date(req.body.end);
-  let lat = req.body.lat;
-  let long = req.body.long;
-  let radius = req.body.radius;
-  let keyword = req.body.keyword;
+    let start = new Date(req.body.start);
+    let end = new Date(req.body.end);
+    let lat = req.body.lat;
+    let long = req.body.long;
+    let radius = req.body.radius;
+    let keyword = req.body.keyword;
 
-  database().collection("events").find({
-    $or: [
-      { $or : [
-         { "topics": keyword },
-         { "topics": { $exists: false} }
+    database().collection("events").find({
+        $or: [
+            {
+                $or: [
+                    {"topics": keyword},
+                    {"topics": {$exists: false}}
+                ]
+            },
+            {
+                $and: [
+                    {
+                        "loc": {
+                            $geoWithin: {
+                                $centerSphere: [[long, lat], radius / 3963.2]
+                            }
+                        }
+                    },
+                    {
+                        $or: [
+                            {$and: [{start: {$lte: start}}, {end: {$gte: start}}]},
+                            {$and: [{start: {$gte: start}}, {end: {$lte: end}}]},
+                            {$and: [{start: {$lte: end}}, {end: {$gte: end}}]},
+                            {$and: [{start: {$lte: start}}, {end: {$gte: end}}]}
+                        ]
+                    }
+                ]
+            }
         ]
-       },
-       {
-        $and: [
-          {
-            "loc": {
-              $geoWithin: {
-                $centerSphere: [[ long,lat ], radius/3963.2 ]
-              }
-           }
-         },
-         { $or : [
-          { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
-          { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
-          { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
-          { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
-         ]
-        }
-      ]
-       }
-    ]
-  }).toArray((error, result) => {
-    if(error) {
-        return res.status(500).send(error);
-    }
-    res.send(result);
-  });
-};
-
-exports.getMyEvents = function(req, res) {
-    console.log(req)
-    database().collection("events").findOne({_id: new ObjectID(req.body.createdBy)}, function(err, result) {
-        if(err) {
-            return res.status(500).send(err);
+    }).toArray((error, result) => {
+        if (error) {
+            return res.status(500).send(error);
         }
         res.send(result);
     });
 };
 
-exports.create = (req, res) => {
-  const newEvent = {
-    start: req.body.start,
-    end: req.body.end,
-    radius: req.body.radius,
-    loc: {
-      type: "Point",
-      coordinates: [req.body.long, req.body.lat]
-    },
-    createdBy: req.user._id
-  }
+exports.getMyEvents = function (req, res) {
+    console.log(req)
 
-  try {
-    database().collection("events").insertOne(newEvent).then((data) => {
-      return res.status(200).send({ eventId: data.insertedId });
+    database().collection("events").find({
+        createdBy: req.body.createdBy
+    }).toArray((error, result) => {
+        if (error) {
+            return res.status(500).send(error);
+        }
+        res.send(result);
     });
-  } catch (e) {
-    return res.status(500).send(e);
-  }
+};
+
+
+exports.create = (req, res) => {
+    const newEvent = {
+        start: req.body.start,
+        end: req.body.end,
+        radius: req.body.radius,
+        loc: {
+            type: "Point",
+            coordinates: [req.body.long, req.body.lat]
+        },
+        createdBy: req.user._id
+    }
+
+    try {
+        database().collection("events").insertOne(newEvent).then((data) => {
+            return res.status(200).send({eventId: data.insertedId});
+        });
+    } catch (e) {
+        return res.status(500).send(e);
+    }
 
 };
 
-exports.delete = function(req, res ) {
-  database().collection("events").deleteOne({_id: new ObjectID(req.params.id)}, function(err) {
-    if(err)
-      res.send(err);
-    else
-      res.json({message: 'Event Deleted!'})
-  });
+exports.delete = function (req, res) {
+    database().collection("events").deleteOne({_id: new ObjectID(req.params.id)}, function (err) {
+        if (err)
+            res.send(err);
+        else
+            res.json({message: 'Event Deleted!'})
+    });
 }
 
 exports.update = (req, res) => {
-  let doc = { start: req.body.start,
-    end: req.body.end,
-    radius: req.body.radius,
-    lat: req.body.lat,
-    long: req.body.long
-  }
-  database().collection("events").updateOne({_id: new ObjectID(req.params.id) }, {$set:{ ...doc }}, function(err, result) {
-    if (err) {
-      return res.status(500).send(err);
+    let doc = {
+        start: req.body.start,
+        end: req.body.end,
+        radius: req.body.radius,
+        lat: req.body.lat,
+        long: req.body.long
     }
-    res.send(result);
-  });
+    database().collection("events").updateOne({_id: new ObjectID(req.params.id)}, {$set: {...doc}}, function (err, result) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send(result);
+    });
 }
