@@ -8,9 +8,6 @@ module.exports = function(app) {
   app.route('/events')
     .get(validateRequest, events.getAll)
 
-  app.route('/originalData')
-      .get(events.get_original)
-
   app.route('/event')
       .post(validateRequest, events.create)
       .delete(validateRequest, events.delete)

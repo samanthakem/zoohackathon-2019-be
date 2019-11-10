@@ -132,15 +132,3 @@ exports.update = (req, res) => {
     res.send(result);
   });
 }
-
-
-// getting all events and filtering
-exports.get_original = function(req, res) {
-  database().collection("events").find({
-  }).toArray((error, result) => {
-    if(error) {
-      return res.status(500).send(error);
-    }
-    res.send(result);
-});
-};
