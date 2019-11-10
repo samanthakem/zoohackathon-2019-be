@@ -86,12 +86,11 @@ exports.getAll = (req, res) => {
 };
 
 exports.getMyEvents = function(req, res) {
-    console.log(req)
-    database().collection("events").findOne({_id: new ObjectID(req.body.createdBy)}, function(err, result) {
-        if(err) {
-            return res.status(500).send(err);
-        }
-        res.send(result);
+    database().collection("events").find({createdBy: req.body.createdBy}).toArray((error, result) => {
+      if(error) {
+          return res.status(500).send(error);
+      }
+      res.send(result);
     });
 };
 
