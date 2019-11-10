@@ -90,7 +90,6 @@ exports.getAll = (req, res) => {
 };
 
 exports.getMyEvents = function(req, res) {
-    console.log(req.body.createdBy);
     database().collection("events").find({createdBy: req.body.createdBy}).toArray((error, result) => {
       if(error) {
           return res.status(500).send(error);
