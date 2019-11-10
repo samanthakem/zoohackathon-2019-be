@@ -53,23 +53,34 @@ exports.getAll = (req, res) => {
   let lat = req.body.lat;
   let long = req.body.long;
   let radius = req.body.radius;
+  let keyword = req.body.keyword;
 
   database().collection("events").find({
     $and: [
-      {
-        "loc": {
-          $geoWithin: {
-            $centerSphere: [[ long,lat ], radius/3963.2 ]
-          }
+      { $or : [
+         { "topics": keyword },
+         { "topics": { $exists: false} }
+        ]
+       },
+       {
+        $and: [
+          {
+            "loc": {
+              $geoWithin: {
+                $centerSphere: [[ long,lat ], radius/3963.2 ]
+              }
+           }
+         },
+         { $or : [
+          { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
+          { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
+          { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
+          { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
+         ]
+        }
+      ]
        }
-     },
-     { $or : [
-      { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
-      { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
-      { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
-      { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
-     ]
-    }]
+    ]
   }).toArray((error, result) => {
     if(error) {
         return res.status(500).send(error);
