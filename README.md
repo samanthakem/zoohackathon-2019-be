@@ -30,6 +30,7 @@ If the installation was successful, you should be able to run the following comm
 ## Endpoints
 
 Note: for all the requests you need to pass the Bearer token to be authenticated.
+Note2: https://cloud.mongodb.com/v2/5db20a21014b76cbd17e5d61#metrics/replicaSet/5db20b4c5538558c66c2aeb6/explorer/hackathon/events/find
 
 `POST /user`
  - name: String
