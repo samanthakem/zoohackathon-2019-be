@@ -10,9 +10,9 @@ module.exports = function(app) {
 
   app.route('/event')
       .post(validateRequest, events.create)
-      .delete(validateRequest, events.delete)
 
   app.route('/event/:id')
     .put(validateRequest, events.update)
+    .delete(validateRequest, events.delete)
 
 };

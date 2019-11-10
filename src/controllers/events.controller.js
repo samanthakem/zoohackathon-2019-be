@@ -111,8 +111,8 @@ exports.create = (req, res) => {
 
 };
 
-exports.delete = function(req, res ){
-  database().collection("events").deleteOne(req.params.id, function(err) {
+exports.delete = function(req, res ) {
+  database().collection("events").deleteOne({_id: new ObjectID(req.params.id)}, function(err) {
     if(err)
       res.send(err);
     else

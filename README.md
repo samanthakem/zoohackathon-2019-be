@@ -26,3 +26,37 @@ If the installation was successful, you should be able to run the following comm
 ## Running the project
 
     $ npm run start
+
+## Endpoints
+
+Note: for all the requests you need to pass the Bearer token to be authenticated.
+
+`POST /user`
+ - name: String
+ - email: String
+ - password: String
+ - phone: String
+
+ It returns a Bearer token.
+
+`GET /user`
+It returns the current user id.
+
+`POST /event`
+ - start: String (yyyy-mm-dd)
+ - end: String (yyyy-mm-dd)
+ - radius: Double
+ - lat: Integer
+ - long: Integer
+It returns the newly created event.
+
+`GET /events`
+ - start: String (yyyy-mm-dd)
+ - end: String (yyyy-mm-dd)
+ - radius: Double
+ - lat: Integer
+ - long: Integer
+ - keyword: String
+It returns all the events with the parameters above.
+
+`DELETE
