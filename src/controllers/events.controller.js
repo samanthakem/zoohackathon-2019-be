@@ -45,7 +45,7 @@
 
 var ObjectID = require('mongodb').ObjectID;
 const database = require("../middleware/db").getDatabase;
-const calculateDistance = require("../util/helper").calculateDistance;
+const getDistanceFromLatLonInKm = require("../util/helper").getDistanceFromLatLonInKm;
 
 exports.getAll = (req, res) => {
   let start = new Date(req.body.start);
@@ -54,38 +54,34 @@ exports.getAll = (req, res) => {
   let long = req.body.long;
   let radius = req.body.radius;
   let keyword = req.body.keyword;
+  var query = { $or : [{ "topics": keyword }]};
+  if(!keyword)
+    query = {};
 
   database().collection("events").find({
-    $or: [
+    $and: [
+      query,
       { $or : [
-         { "topics": keyword },
-         { "topics": { $exists: false} }
+        { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
+        { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
+        { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
+        { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
         ]
-       },
-       {
-        $and: [
-          {
-            "loc": {
-              $geoWithin: {
-                $centerSphere: [[ long,lat ], radius/3963.2 ]
-              }
-           }
-         },
-         { $or : [
-          { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
-          { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
-          { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
-          { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
-         ]
-        }
-      ]
-       }
+      }
     ]
   }).toArray((error, result) => {
     if(error) {
         return res.status(500).send(error);
     }
-    res.send(result);
+    var geospatialInt = [];
+    result.forEach(el => {
+      let [lon1,lat1] = el.loc.coordinates;
+      let distance = getDistanceFromLatLonInKm(lat1,lon1,lat,long);
+      if(distance < (parseFloat(radius) + parseFloat(el.radius))) {
+        geospatialInt.push(el);
+      }
+    });
+    res.send(geospatialInt);
   });
 };
 
