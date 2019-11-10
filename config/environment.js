@@ -5,11 +5,11 @@ const dev = {
    port: 3000
  },
  db: {
-  name: 'hackathon',
-  username: 'sdzg',
-  password: 'Intuit123'
+  name: process.env.DB_NAME,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASS
  },
- privateKey: "myprivatekey"
+ privateKey: process.env.PRIVATE_KEY
 };
 
 const test = {
