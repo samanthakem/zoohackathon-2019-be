@@ -48,12 +48,12 @@ const database = require("../middleware/db").getDatabase;
 const getDistanceFromLatLonInKm = require("../util/helper").getDistanceFromLatLonInKm;
 
 exports.getAll = (req, res) => {
-  let start = new Date(req.body.start);
-  let end = new Date(req.body.end);
-  let lat = req.body.lat;
-  let long = req.body.long;
-  let radius = req.body.radius;
-  let keyword = req.body.keyword;
+  let start = new Date(req.query.start);
+  let end = new Date(req.query.end);
+  let lat = req.query.lat;
+  let long = req.query.long;
+  let radius = req.query.radius;
+  let keyword = req.query.keyword;
   var query = { $or : [{ "topics": keyword }]};
   if(!keyword)
     query = {};
@@ -86,7 +86,6 @@ exports.getAll = (req, res) => {
 };
 
 exports.getMyEvents = function(req, res) {
-    console.log(req.query.createdBy);
     database().collection("events").find({createdBy: req.query.createdBy}).toArray((error, result) => {
       if(error) {
           return res.status(500).send(error);
@@ -97,8 +96,8 @@ exports.getMyEvents = function(req, res) {
 
 exports.create = (req, res) => {
   const newEvent = {
-    start: req.body.start,
-    end: req.body.end,
+    start: new Date(req.body.start),
+    end: new Date(req.body.end),
     radius: req.body.radius,
     loc: {
       type: "Point",
