@@ -8,6 +8,7 @@ module.exports = function(app) {
   app.route('/events')
     .get(validateRequest, events.getAll)
 
+
   app.route('/event')
       .post(validateRequest, events.create)
 
@@ -15,4 +16,6 @@ module.exports = function(app) {
     .put(validateRequest, events.update)
     .delete(validateRequest, events.delete)
 
+  app.route('/myEvents')
+      .get(validateRequest, events.getMyEvents)
 };

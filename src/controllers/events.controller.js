@@ -89,6 +89,16 @@ exports.getAll = (req, res) => {
   });
 };
 
+exports.getMyEvents = function(req, res) {
+    console.log(req)
+    database().collection("events").findOne({_id: new ObjectID(req.body.createdBy)}, function(err, result) {
+        if(err) {
+            return res.status(500).send(err);
+        }
+        res.send(result);
+    });
+};
+
 exports.create = (req, res) => {
   const newEvent = {
     start: req.body.start,
