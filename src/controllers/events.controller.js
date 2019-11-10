@@ -45,50 +45,44 @@
 
 var ObjectID = require('mongodb').ObjectID;
 const database = require("../middleware/db").getDatabase;
-const calculateDistance = require("../util/helper").calculateDistance;
+const getDistanceFromLatLonInKm = require("../util/helper").getDistanceFromLatLonInKm;
 
 exports.getAll = (req, res) => {
-    let start = new Date(req.body.start);
-    let end = new Date(req.body.end);
-    let lat = req.body.lat;
-    let long = req.body.long;
-    let radius = req.body.radius;
-    let keyword = req.body.keyword;
+  let start = new Date(req.query.start);
+  let end = new Date(req.query.end);
+  let lat = req.query.lat;
+  let long = req.query.long;
+  let radius = req.query.radius;
+  let keyword = req.query.keyword;
+  var query = { $or : [{ "topics": keyword }]};
+  if(!keyword)
+    query = {};
 
-    database().collection("events").find({
-        $or: [
-            {
-                $or: [
-                    {"topics": keyword},
-                    {"topics": {$exists: false}}
-                ]
-            },
-            {
-                $and: [
-                    {
-                        "loc": {
-                            $geoWithin: {
-                                $centerSphere: [[long, lat], radius / 3963.2]
-                            }
-                        }
-                    },
-                    {
-                        $or: [
-                            {$and: [{start: {$lte: start}}, {end: {$gte: start}}]},
-                            {$and: [{start: {$gte: start}}, {end: {$lte: end}}]},
-                            {$and: [{start: {$lte: end}}, {end: {$gte: end}}]},
-                            {$and: [{start: {$lte: start}}, {end: {$gte: end}}]}
-                        ]
-                    }
-                ]
-            }
+  database().collection("events").find({
+    $and: [
+      query,
+      { $or : [
+        { $and: [ {start : { $lte : start }}, {end: { $gte: start }}] },
+        { $and: [ {start : { $gte : start }}, {end: { $lte: end }}] },
+        { $and: [ {start : { $lte : end }}, {end: { $gte: end }}] },
+        { $and: [ {start : { $lte : start }}, {end: { $gte: end }}] }
         ]
-    }).toArray((error, result) => {
-        if (error) {
-            return res.status(500).send(error);
-        }
-        res.send(result);
+      }
+    ]
+  }).toArray((error, result) => {
+    if(error) {
+        return res.status(500).send(error);
+    }
+    var geospatialInt = [];
+    result.forEach(el => {
+      let [lon1,lat1] = el.loc.coordinates;
+      let distance = getDistanceFromLatLonInKm(lat1,lon1,lat,long);
+      if(distance < (parseFloat(radius) + parseFloat(el.radius))) {
+        geospatialInt.push(el);
+      }
     });
+    res.send(geospatialInt);
+  });
 };
 
 exports.getMyEvents = function (req, res) {
@@ -106,16 +100,16 @@ exports.getMyEvents = function (req, res) {
 
 
 exports.create = (req, res) => {
-    const newEvent = {
-        start: req.body.start,
-        end: req.body.end,
-        radius: req.body.radius,
-        loc: {
-            type: "Point",
-            coordinates: [req.body.long, req.body.lat]
-        },
-        createdBy: req.user._id
-    }
+  const newEvent = {
+    start: new Date(req.body.start),
+    end: new Date(req.body.end),
+    radius: req.body.radius,
+    loc: {
+      type: "Point",
+      coordinates: [req.body.long, req.body.lat]
+    },
+    createdBy: req.user._id
+  }
 
     try {
         database().collection("events").insertOne(newEvent).then((data) => {
