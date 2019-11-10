@@ -1,14 +1,14 @@
 var express = require('express'),
   app = express(),
-  config = require('./config.js'),
+  config = require('./config/environment'),
   bodyParser = require('body-parser');
 
-const initDatabase = require("./db").initDatabase;
+const initDatabase = require("./src/middleware/db").initDatabase;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var routes = require('./src/routes/events');
+var routes = require('./src/routes');
 routes(app);
 
 initDatabase(function (err) {

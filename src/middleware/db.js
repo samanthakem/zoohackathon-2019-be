@@ -1,6 +1,6 @@
 const assert = require("assert");
 const client = require("mongodb").MongoClient;
-const config = require("./config");
+const config = require("../../config/environment");
 
 let uri = `mongodb+srv://${config.db.username}:${config.db.password}@cluster0-evtwo.mongodb.net/test?retryWrites=true&w=majority`;
 

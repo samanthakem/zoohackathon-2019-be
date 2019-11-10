@@ -1,8 +1,8 @@
 'use strict';
 
-const database = require("../../db").getDatabase;
+const database = require("../middleware/db").getDatabase;
 
-exports.get_all = function(req, res) {
+exports.get_all = (req, res) => {
   database().collection("events").find({}).toArray((error, result) => {
     if(error) {
         return res.status(500).send(error);

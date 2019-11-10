@@ -8,7 +8,8 @@ const dev = {
   name: 'hackathon',
   username: 'sdzg',
   password: 'Intuit123'
- }
+ },
+ privateKey: "myprivatekey"
 };
 
 const test = {
