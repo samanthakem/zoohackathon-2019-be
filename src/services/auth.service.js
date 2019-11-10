@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../../config/environment");
 
 const generateAuthToken = (user) => {
- return jwt.sign({ _id: user._id }, config.privateKey );
+ return jwt.sign({ _id: user._id }, config.privateKey, { expiresIn: '2d' } );
 }
 
 const validateUser = (user) => {

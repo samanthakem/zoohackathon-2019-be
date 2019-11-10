@@ -1,48 +1,5 @@
 'use strict';
 
-// _id
-// :
-// 5dc7903ebf8caaaada51fcf1
-// start
-// :
-// "2019-11-18"
-// end
-// :
-// "2019-11-30"
-// radius
-// :
-// 0.7
-// lat
-// :
-// -0.565787
-// long
-// :
-// 25.260701
-// createdBy
-// :
-// "5dc7878b088759a13c774c84"
-// _id
-// :
-// 5dc794799c94deafac6297e0
-// start
-// :
-// "2019-11-19"
-// end
-// :
-// "2019-11-30"
-// radius
-// :
-// 0.8
-// lat
-// :
-// -0.565787
-// long
-// :
-// 25.260701
-// createdBy
-// :
-// "5dc7878b088759a13c774c84"
-
 var ObjectID = require('mongodb').ObjectID;
 const database = require("../middleware/db").getDatabase;
 const getDistanceFromLatLonInKm = require("../util/helper").getDistanceFromLatLonInKm;
