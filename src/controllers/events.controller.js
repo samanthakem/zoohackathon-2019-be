@@ -1,16 +1,9 @@
 'use strict';
 
-const database = require("../../db").getDatabase;
-// getting all events and filtering
-exports.get_all = function(req, res) {
-  console.log(req)
-  database().collection("events").find({
-    "loc" : {
-      $geoWithin : {
-        $centerSphere : [[req.body.lat,req.body.long], 100/3963.2 ]
-      }
-    }
-  }).toArray((error, result) => {
+const database = require("../middleware/db").getDatabase;
+
+exports.get_all = (req, res) => {
+  database().collection("events").find({}).toArray((error, result) => {
     if(error) {
         return res.status(500).send(error);
     }
