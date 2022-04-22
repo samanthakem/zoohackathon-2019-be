@@ -21,6 +21,6 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongodb": "^3.3.3",
-    "nconf": "^0.10.0"
+    "nconf": "^0.11.4"
   }
 }
