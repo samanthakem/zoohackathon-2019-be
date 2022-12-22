@@ -18,7 +18,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "joi": "^14.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.15",
     "mongodb": "^3.3.3",
     "nconf": "^0.10.0"
